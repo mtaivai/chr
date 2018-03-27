@@ -1,0 +1,65 @@
+group 'fi.codense.chr'
+version '0.0.1-SNAPSHOT'
+
+buildscript {
+	ext {
+		cldrVersion = '32.0.1'
+		cldrCommonFile = "cldr-common-${cldrVersion}.zip"
+		cldrCommonDownloadUrl = "http://unicode.org/Public/cldr/${cldrVersion}/${cldrCommonFile}"
+	}
+}
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile 'com.google.code.gson:gson:2.8.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+
+//dependencies {
+//	cldr "cldr:cldr-common:${cldrVersion}@zip"
+//}
+//ivy {
+//	url 'http://unicode.org/Public/'
+//	layout 'pattern', {
+//		artifact '/[organization]/[revision]/[module]-[revision].[ext]'
+//	}
+//}
+
+
+task downloadCldrCommon {
+	doLast {
+		// def targetDir = new File(buildDir, "/build/resources/main")
+		def targetDir = new File(projectDir, "/cldr")
+		targetDir.mkdirs()
+		def targetFile = new File(targetDir, cldrCommonFile)
+		
+		if (!targetFile.exists()) {
+			ant.get(src: cldrCommonDownloadUrl, dest: targetFile)
+		}
+	}
+}
+
+task generateCldrResources(dependsOn: [downloadCldrCommon, classes], type: JavaExec) {
+	
+	def inputFile = new File(new File(projectDir, "/cldr"), cldrCommonFile)
+	
+	main ='cldr.tools.CldrExporter'
+	classpath = sourceSets.main.runtimeClasspath
+	// systemProperty 'simple.message', 'Hello '
+	
+	def outputDir = new File(buildDir, "/resources/main/cldr")
+	outputDir.mkdirs()
+	
+	args inputFile.path, '-o', outputDir.path, '-e', 'territories'//, '-e', 'languages', '-e', 'locales'
+}
+
+classes.finalizedBy generateCldrResources

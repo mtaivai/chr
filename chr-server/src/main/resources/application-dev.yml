@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:24774/chr-dev
+    username: chr-dev
+    password: secret
+  jpa:
+    show-sql: false
+
+#logging:
+#  level:
+#    org:
+#      hibernate: trace
+
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        web:
+
+
+#chr.locale-data-initializer.cldr-common-file: FoOBar
+chr.locale-data.import-on-startup: true
+chr.locale-data.cldr-version: 32.0.1
+logging:
+  level:
+    fi.codense.chr: debug
+
+#chr.locale-data.cldr-common-url: http://unicode.org/Public/cldr/32.0.1/cldr-common-32.0.1.zip

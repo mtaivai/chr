@@ -1,0 +1,53 @@
+.SearchInput {
+
+  input.search-term {
+    font-style: italic;
+  }
+  .dropdown {
+
+    .loading {
+      position: absolute;
+    }
+    &.has-items .loading {
+      top: -0.5em;
+    }
+    .dropdown-menu {
+      min-height: 3em;
+      width: 100%;
+    }
+  }
+
+  .input-group-prepend.loading {
+    position: absolute;
+    left: 0;
+    z-index: 100;
+  }
+  .input-group-append.loading {
+    position: absolute;
+    right: 0;
+    z-index: 100;
+  }
+
+  .search-match-highlight {
+    background-color: #fff885;
+    font-weight: bold;
+
+  }
+
+  .search-match-perfect {
+    background-color: #f7fff7;
+  }
+  .search-match-excellent {
+    background-color: #f7fff7;
+  }
+  .search-match-very-good {
+    //background-color: #f0fff0;
+  }
+  .search-match-good {
+  }
+  .search-match-average {
+  }
+  .search-match-poor {
+  }
+
+}

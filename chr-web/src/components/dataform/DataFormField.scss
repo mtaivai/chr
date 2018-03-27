@@ -1,0 +1,59 @@
+
+.DataForm {
+  .DataFormField {
+
+    &.modified {
+      label {
+        font-weight: bold;
+      }
+    }
+    &.required {
+      label:after {
+        //font-size: 80%;
+        content: '*';
+        color: #B34040;
+      }
+    }
+
+    &.view-mode {
+      label {
+        font-weight: bold;
+        padding-bottom: 0;
+        font-size: smaller;
+      }
+      .form-control {
+        border-color: transparent;
+        border-radius: 0;
+
+        padding-left: 0;
+
+        a.edit-field-value {
+          font-size: 8pt;
+          float: right;
+
+
+          &:hover, &:visited, &:active {
+            color: inherit;
+          }
+        }
+      }
+      &.horizontal {
+        label {
+          font-size: inherit;
+        }
+        .form-control {
+
+          padding-left: 0;
+          padding-bottom: 0;
+        }
+      }
+      &.vertical {
+
+        .form-control {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+}
+

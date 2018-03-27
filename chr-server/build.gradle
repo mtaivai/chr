@@ -1,0 +1,190 @@
+buildscript {
+	ext {
+		jooqVersion = '3.10.4'
+		springBootVersion = '2.0.0.RC1'
+		postgresqlDriverVersion = '42.2.1'
+		jaxbVersion = '2.3.0'
+		activationApiVersion = '1.2.0'
+		hibernateVersion = '5.2.12.Final'
+		cldrVersion = '32.0.1'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://plugins.gradle.org/m2/" }
+		
+	}
+	dependencies {
+		
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		
+		classpath "org.postgresql:postgresql:${postgresqlDriverVersion}"
+		classpath 'nu.studer:gradle-jooq-plugin:2.0.9'
+		
+		// We're targeting Java 9, but unfortunately it doesn't include JAXB
+		// in the default classpath
+		classpath "javax.xml.bind:jaxb-api:${jaxbVersion}"
+		classpath "com.sun.xml.bind:jaxb-impl:${jaxbVersion}"
+		classpath "com.sun.xml.bind:jaxb-core:${jaxbVersion}"
+		classpath "javax.activation:javax.activation-api:${activationApiVersion}"
+		
+		classpath "org.hibernate:hibernate-gradle-plugin:${hibernateVersion}"
+		
+	}
+}
+
+plugins {
+	id "net.ltgt.apt" version "0.13"
+	
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'nu.studer.jooq'
+apply plugin: 'org.hibernate.orm'
+
+
+group = 'fi.codense.chr'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 9
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+
+dependencies {
+	//compile('org.flywaydb:flyway-core')
+	compile project(':chr-localedata')
+	
+	compile('org.springframework.boot:spring-boot-starter-jooq')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	
+	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	
+	compile 'org.springframework.data:spring-data-rest-hal-browser'
+	
+	compile('javax.persistence:javax.persistence-api:2.2')
+	compile 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
+	
+	compile "org.apache.commons:commons-lang3:3.7"
+	
+	runtime('org.springframework.boot:spring-boot-devtools')
+	runtime('org.postgresql:postgresql')
+	
+	runtime "javax.xml.bind:jaxb-api:${jaxbVersion}"
+	runtime "com.sun.xml.bind:jaxb-impl:${jaxbVersion}"
+	runtime "com.sun.xml.bind:jaxb-core:${jaxbVersion}"
+	runtime "javax.activation:javax.activation-api:${activationApiVersion}"
+	
+	compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+	compileOnly('org.projectlombok:lombok')
+	compileOnly 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+	
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	
+	apt 'org.mapstruct:mapstruct-processor:1.2.0.Final'
+	apt "org.projectlombok:lombok:1.16.20"
+}
+bootJar {
+	mainClassName = 'fi.codense.chr.server.ChrServerApplication'
+}
+
+bootRun {
+	//environment = [
+	//	"SPRING_PROFILES_ACTIVE": "dev"
+	//]
+	//environment "SPRING_PROFILES_ACTIVE", "dev"
+	//systemProperties (["spring.profiles.active": "dev"])
+	
+	//systemProperty 'spring.profiles.active', 'dev'
+	
+}
+springBoot {
+	bootRun {
+	
+		
+	}
+	bootJar {
+	
+	}
+	// 		mainClass = "fi.codense.chr.server.ChrServerApplication"
+	
+	
+}
+
+hibernate {
+	enhance {
+		enableLazyInitialization = true
+		enableDirtyTracking = true
+		enableAssociationManagement = true
+	}
+}
+
+jooq {
+	version = "${jooqVersion}"
+	edition = 'OSS'
+	dependencies {
+		jooqRuntime "org.postgresql:postgresql:${postgresqlDriverVersion}"
+		// We're targeting Java 9, but unfortunately it doesn't include JAXB
+		// in the default classpath
+		jooqRuntime "javax.xml.bind:jaxb-api:${jaxbVersion}"
+		jooqRuntime "com.sun.xml.bind:jaxb-impl:${jaxbVersion}"
+		jooqRuntime "com.sun.xml.bind:jaxb-core:${jaxbVersion}"
+		jooqRuntime "javax.activation:javax.activation-api:${activationApiVersion}"
+		
+	}
+	chr(sourceSets.main) {
+		jdbc {
+			driver = 'org.postgresql.Driver'
+			url = 'jdbc:postgresql://localhost:24774/chr-dev'
+			user = 'chr-dev'
+			password = 'secret'
+		}
+		generator {
+			
+			name = 'org.jooq.util.DefaultGenerator'
+			strategy {
+				name = 'org.jooq.util.DefaultGeneratorStrategy'
+				// ...
+			}
+			database {
+				name = 'org.jooq.util.postgres.PostgresDatabase'
+				inputSchema = 'chr'
+				forcedTypes {
+					forcedType {
+						name = 'varchar'
+						expression = '.*'
+						types = 'JSONB?'
+					}
+					forcedType {
+						name = 'varchar'
+						expression = '.*'
+						types = 'INET'
+					}
+				}
+				// ...
+			}
+			generate {
+				daos = true
+				relations = true
+				deprecated = false
+				records = true
+				immutablePojos = true
+				fluentSetters = true
+				jpaAnnotations = true
+				// ...
+			}
+			target {
+				packageName = 'fi.codense.chr.model.jooq.psql'
+				//directory = ""
+			}
+		}
+	}
+}

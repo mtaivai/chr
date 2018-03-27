@@ -1,0 +1,299 @@
+
+
+$checkboxBackgroundColor: white;
+$checkboxSelectedBackgroundColor: #5372ff;
+$checkboxDisabledSelectedBackgroundColor: yellow;
+
+select.TagInput {
+  width: 100%;
+}
+
+.TagInput {
+
+
+  &.edit-mode {
+    .inner-container {
+      background-color: #ECFFEA;
+      //box-shadow:  0 0 10px 10px rgba(236,255,234,0.75);
+    }
+  }
+
+  &:hover {
+    .toggle-edit-mode {
+      background-color: #e0e0e0;
+      color: black;
+    }
+  }
+  .form-control {
+    cursor: pointer;
+
+    input, select {
+      margin: 0;
+      border: 0 none;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .inner-container {
+    //border: 1px solid black;
+    //>*:nth-last-child(2) {
+    //  border: 1px solid red;
+    //  margin-right: 2.5rem;
+    //}
+  }
+
+
+  .toggle-edit-mode {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 2.5rem;
+    //height: 2rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    line-height: 1.5;
+
+    background-color: transparent;
+    color: inherit;
+
+
+    //color: transparent;
+
+    &:after {
+      content: "";
+      position: absolute;
+      //display: none;
+
+      //left: 0.6rem;
+      //top: 0.6rem;
+      //width: 0.8rem;
+      //height: 0.8rem;
+      //border: solid white;
+      //border-width: 3px 0px 0px 3px;
+      //-webkit-transform: rotate(-45deg);
+      //-ms-transform: rotate(-45deg);
+      //transform: rotate(-45deg);
+    }
+
+    &~ .tags {
+      margin-right: 3rem;
+    }
+  }
+
+  .Popper {
+    background-color: #fff;//rgba(240, 240, 240, 0.95);
+
+    box-shadow: 2px 2px 19px 0 rgba(0,0,0,0.75);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+  }
+
+  .tags {
+
+
+    &.layout-vertical {
+      //display: block;
+      .tag {
+        display: block;
+
+        &.edit-mode:hover {
+        }
+      }
+    }
+
+    // Make room for the edit button:
+    &.with-edit-button .tag:last-child {
+      margin-right: 2.5rem;
+    }
+
+    .tag {
+      margin-right: 1rem;
+      margin-bottom: 0.2rem;
+      margin-top: 0.2rem;
+      &:last-child {
+        margin-right: 0;
+      }
+
+
+    }
+  }
+
+
+
+  .tag {
+
+    display: inline-block;
+
+    margin-bottom: 0;
+    margin-top: 0;
+    white-space: nowrap;
+
+    vertical-align: baseline;
+    //cursor: default;
+
+    //height: 2rem;
+
+    position: relative;
+
+    &.layout-badge {
+      border: 1px solid #e0e0e0;
+      border-radius: 0.3rem;
+      padding-left: 0.6em;
+      padding-right: 0.6em;
+      text-align: center;
+
+      .checkmark {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+    }
+
+    &.selected {
+      font-weight: bolder;
+    }
+    &.unselected {
+      //color: #999999;
+    }
+
+    &.with-checkbox {
+      padding-left: 1.8rem;
+      //cursor: pointer;
+
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      &.edit-mode:hover {
+        input.checkbox ~ .checkmark,
+        input.radio ~ .checkmark
+        {
+          //background-color: #ccc;
+          box-shadow: 0 0 6px 2px rgba(0,128,255,0.75);
+        }
+        //background-color: #ccc;
+
+      }
+
+
+      input.checkbox,
+      input.radio {
+        position: absolute;
+        opacity: 0;
+        //visibility: hidden;
+        //cursor: pointer;
+
+        &:focus ~ .checkmark {
+          -webkit-box-shadow: 0px 0px 4px 2px rgba(0,128,255,0.75);
+          -moz-box-shadow: 0px 0px 4px 2px rgba(0,128,255,0.75);
+          box-shadow: 0px 0px 4px 2px rgba(0,128,255,0.75);
+        }
+
+        &:checked ~ .checkmark {
+          //background-color: #2196F3;
+          //background-color: #007bff;
+
+          background-color: $checkboxSelectedBackgroundColor;
+
+          &.radio {
+            background-color: $checkboxBackgroundColor;
+            .checkmark-inner {
+              box-shadow: inset -1px -1px 1px 0 rgba(silver,1);
+              border: 0.4em solid $checkboxSelectedBackgroundColor;
+            }
+          }
+
+          .checkmark-inner:after {
+            display: block;
+          }
+
+        }
+      }
+
+      .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 1.5rem;
+        width: 1.5rem;
+        background-color: $checkboxBackgroundColor;//#eee;
+
+        border: 1px solid silver;
+
+        &.checkbox {
+
+          border-radius: 0.25rem;
+
+          .checkmark-inner {
+            border-radius: 0.20rem;
+            border: 0 none;
+
+            &:after {
+              left: 9px;
+              top: 5px;
+              width: 5px;
+              height: 10px;
+              border: solid white;
+              border-width: 0 3px 3px 0;
+              -webkit-transform: rotate(45deg);
+              -ms-transform: rotate(45deg);
+              transform: rotate(45deg);
+            }
+          }
+        }
+        &.radio {
+          border-radius: 50%;
+          .checkmark-inner {
+            border-radius: 50%;
+
+            &:after {
+            }
+          }
+        }
+
+        .checkmark-inner {
+          width: 100%;
+          height: 100%;
+
+          //box-shadow: inset 0 0 2px 6px rgba($checkboxSelectedBackgroundColor,1);
+          //background-color: $checkboxBackgroundColor;
+
+          &:after {
+            content: "";
+            position: absolute;
+            display: none;
+          }
+
+        }
+
+
+      }
+    }
+
+    &.disabled {
+
+
+
+    }
+
+
+  }
+
+  //.input-group-append {
+  //}
+  //.dropdown-toggle {
+  //  overflow:hidden;
+  //  padding-left: 100;
+  //}
+
+
+  .disabled {
+    color: #999999;
+
+  }
+
+
+}

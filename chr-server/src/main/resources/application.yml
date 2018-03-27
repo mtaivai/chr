@@ -1,0 +1,30 @@
+spring:
+  jooq:
+    sql-dialect: Postgres
+  jpa:
+    properties:
+      hibernate.jdbc.lob.non_contextual_creation: true
+      hibernate.default_schema: chr
+      #hibernate.enhancer.enableLazyInitialization: true
+      hibernate.proc.param_null_passing: true
+      javax.persistence:
+        schema-generation:
+          #database.action: none
+          scripts.action: drop-and-create
+          #create-source: ...
+          #drop-source: ...
+          create-database-schemas: true
+          scripts.create-target: db/create.sql
+          scripts.drop-target: db/drop.sql
+          #create-script-source: ...
+          #drop-script-source: ...
+          #connection: ...
+        #database-product-name: ...
+        #database-major-version: ...
+        #database-minor-version: ...
+        #sql-load-script-source: ...
+  data:
+    rest:
+      detection-strategy: annotated
+  jackson:
+    default-property-inclusion: non_absent

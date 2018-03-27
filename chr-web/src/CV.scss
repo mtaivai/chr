@@ -1,0 +1,59 @@
+
+
+.CV {
+
+    .address {
+        display: table;
+        .address-line {
+            display: table-row;
+            //display: block;
+            border: 1px solid red;
+            line-height: 1em;
+            font-size: inherit;
+        }
+        .address-line.address-country {
+            font-weight: bold;
+        }
+    }
+
+
+    .bio-line {
+        display: table-row;
+
+        .bio-line-date {
+            display: table-cell;
+            width: 12em;
+            .from-date {
+            }
+            .to-date {
+            }
+            .day {
+            }
+            .month {
+            }
+            .year {
+                font-weight: bold;
+            }
+        }
+        .bio-line-details {
+            display: table-cell;
+
+            .bio-line-details-title {
+                font-weight: bold;
+                display: block;
+            }
+            .bio-line-details-subtitle {
+                display: block;
+            }
+            .bio-line-details-body {
+                display: block;
+                font-style: italic;
+            }
+        }
+
+
+    }
+
+
+
+}

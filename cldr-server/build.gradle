@@ -1,0 +1,99 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.10.RELEASE'
+		cldrVersion = '32.0.1'
+	}
+	
+	repositories {
+		mavenCentral()
+	}
+	
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+group = 'com.example'
+version = '${cldrVersion}-SNAPSHOT'
+sourceCompatibility = 1.8
+
+configurations {
+	cldr {
+		repositories {
+			ivy {
+				url 'http://unicode.org/Public/'
+				layout 'pattern', {
+					artifact '/[organization]/[revision]/[module]-[revision].[ext]'
+				}
+			}
+		}
+	}
+}
+
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	runtime('org.springframework.boot:spring-boot-devtools')
+	compileOnly('org.springframework.boot:spring-boot-configuration-processor')
+	
+	cldr "cldr:cldr-common:${cldrVersion}@zip"
+	
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.security:spring-security-test')
+	
+}
+
+
+task createStrippedCldrArtifacts {
+	doLast {
+		
+		configurations.cldr.resolve().each { file ->
+			if (file.name.equals('cldr-common-' + cldrVersion + '.zip')) {
+				
+				// Create stripped version
+				
+				// 1. Unzip to a temporary location
+				// 2. Zip selected folders to final location
+				
+				// def targetDir = new File(buildDir, "/build/resources/main")
+				def targetDir = new File(buildDir, "/resources/main/cldr")
+				targetDir.mkdirs()
+				
+				def targetFile = new File(targetDir, "cldr-common-stripped-${cldrVersion}.jar")
+				
+				if (targetFile.exists()) {
+					// println "CLDR common dist package already exists: ${targetFile}";
+				} else {
+					println "Generating stripped cldr-common: ${targetFile}"
+					def tempTargetDir = File.createTempDir()
+					
+					def unzipDir = new File(tempTargetDir, "cldr")
+					unzipDir.mkdirs()
+					
+					println "Extracting '${file}' to '${unzipDir}'..."
+					ant.unzip(src: file, dest: unzipDir)
+					
+					println "Creating '${targetFile}'..."
+					ant.zip(destfile: targetFile, baseDir: tempTargetDir, includes: 'cldr/common/main/**')
+
+			        unzipDir.deleteDir()
+			        tempTargetDir.deleteDir()
+				}
+			}
+		}
+	}
+}
+
+classes.finalizedBy createStrippedCldrArtifacts
+

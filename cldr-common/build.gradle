@@ -1,0 +1,85 @@
+group 'fi.codense.cldr'
+version '32.0.1-SNAPSHOT'
+
+buildscript {
+    ext {
+        cldrVersion = '32.0.1'
+    }
+}
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    
+    ivy {
+        url 'http://unicode.org/Public/'
+        layout 'pattern', {
+            artifact '/[organization]/[revision]/[module]-[revision].[ext]'
+        }
+    }
+}
+
+configurations {
+    cldr {
+    
+    }
+}
+
+
+dependencies {
+    cldr "cldr:cldr-common:${cldrVersion}@zip"
+}
+
+
+
+task createStrippedCldrArtifacts {
+    doLast {
+        
+        configurations.cldr.resolve().each { file ->
+            if (file.name.equals('cldr-common-' + cldrVersion + '.zip')) {
+                
+                // Create stripped version
+                
+                // 1. Unzip to a temporary location
+                // 2. Zip selected folders to final location
+                
+                // def targetDir = new File(buildDir, "/build/resources/main")
+                def targetDir = new File(buildDir, "/resources/main/cldr")
+                targetDir.mkdirs()
+                def targetFileName = "cldr-common-stripped-${cldrVersion}.zip"
+                def targetFile = new File(targetDir, targetFileName)
+    
+                
+                if (targetFile.exists()) {
+                    // println "CLDR common dist package already exists: ${targetFile}";
+                } else {
+                    println "Generating stripped cldr-common: ${targetFile}"
+                    def tempTargetDir = File.createTempDir()
+                    
+                    def unzipDir = new File(tempTargetDir, "cldr")
+                    unzipDir.mkdirs()
+                    
+                    println "Extracting '${file}' to '${unzipDir}'..."
+                    ant.unzip(src: file, dest: unzipDir)
+                    
+                    println "Creating '${targetFile}'..."
+                    ant.zip(destfile: targetFile, baseDir: tempTargetDir,
+	                    includes: 'cldr/common/main/**, **')
+    
+    
+                    unzipDir.deleteDir()
+                    tempTargetDir.deleteDir()
+                }
+                // Write version to properties
+                new File(targetDir, "cldr-common.properties")
+                        .text = """
+cldr-common.version=${cldrVersion}
+cldr-common.zipfile=${targetFileName}
+"""
+            }
+        }
+    }
+}
+
+classes.finalizedBy createStrippedCldrArtifacts
